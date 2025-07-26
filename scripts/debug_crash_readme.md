@@ -29,4 +29,4 @@
 
 gdb ./MyApp ./crash.core
 
-
+# 生成调试符号到线上环境 见gen_and_upload_symbols

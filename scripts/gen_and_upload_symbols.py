@@ -2,9 +2,6 @@
 # -*- coding: utf-8 -*-
  
 # python3 gen_and_upload_symbols.py ../out/
- 
-
-
 
 import os
 import sys
@@ -20,7 +17,7 @@ import requests
 CONFIG = {
     "SUBDOMAIN": "cgs",  # 您的 Backtrace 子域名
     "TOKEN": "e461fe30fdad99925439a62c599edf7d66b7e007d1379d2359a7e2380af62130",  # 具有 'symbol:post' 权限的符号访问令牌
-    "TAG": "v1.2.6",  # 为本次上传指定的标签 (例如应用版本号), 如果不需要则设为 None
+    "TAG": "v1.2.7",  # 为本次上传指定的标签 (例如应用版本号), 如果不需要则设为 None
     "DUMP_SYMS_PATH": "../3rdparty/crashpad/tools/linux/dump_syms"  # dump_syms 工具的路径
 }
 # --- 配置区结束 ---
@@ -233,7 +230,7 @@ def main():
 
         if not generated_sym_files:
                         print("\n未能成功生成任何符号文件。脚本退出。")
-            sys.exit(1)
+                        sys.exit(1)
             
         print(f"\n--- 总共生成了 {len(generated_sym_files)} 个 .sym 文件 ---")
 

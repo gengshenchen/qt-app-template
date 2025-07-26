@@ -240,3 +240,6 @@ $RECYCLE.BIN/
 .DS_Store
 .vs
 .clang-tidy
+
+# 忽略 Clangd 和其他編輯器的快取目錄
+/.cache/

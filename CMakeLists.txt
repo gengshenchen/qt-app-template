@@ -40,6 +40,7 @@ qt_policy(SET QTP0004 NEW)
 
 # 按照“从底层到上层”的依赖顺序添加
 add_subdirectory(3rdparty/spdlog)
+add_subdirectory(3rdparty/crashpad)
 add_subdirectory(src/shared)
 add_subdirectory(src/core)
 add_subdirectory(src/widgets)
