@@ -4,3 +4,15 @@
 [submodule "3rdparty/crashpad"]
 	path = 3rdparty/crashpad
 	url = git@github.com:gengshenchen/crashpad.git
+[submodule "3rdparty/simpleini"]
+	path = 3rdparty/simpleini
+	url = git@github.com:gengshenchen/simpleini.git
+[submodule "3rdparty/json"]
+	path = 3rdparty/json
+	url = git@github.com:gengshenchen/json.git
+[submodule "3rdparty/cpp-httplib"]
+	path = 3rdparty/cpp-httplib
+	url = git@github.com:gengshenchen/cpp-httplib.git
+[submodule "3rdparty/taskflow"]
+	path = 3rdparty/taskflow
+	url = git@github.com:gengshenchen/taskflow.git
