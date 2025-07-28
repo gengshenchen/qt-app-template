@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.19)
 
 project(qt-app-template VERSION 1.0.0 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -41,6 +41,12 @@ qt_policy(SET QTP0004 NEW)
 # 按照“从底层到上层”的依赖顺序添加
 add_subdirectory(3rdparty/spdlog)
 add_subdirectory(3rdparty/crashpad)
+# 設置EXCLUDE_FROM_ALL可以防止在默認構建時編譯這些庫的測試等無關目標，加快編譯速度
+add_subdirectory(3rdparty/simpleini EXCLUDE_FROM_ALL)
+add_subdirectory(3rdparty/json EXCLUDE_FROM_ALL)
+add_subdirectory(3rdparty/cpp-httplib EXCLUDE_FROM_ALL)
+add_subdirectory(3rdparty/taskflow EXCLUDE_FROM_ALL)
+
 add_subdirectory(src/shared)
 add_subdirectory(src/core)
 add_subdirectory(src/widgets)

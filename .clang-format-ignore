@@ -1,0 +1,7 @@
+# 忽略所有在 third_party 目录下的文件
+third_party/*
+3rdparty/**
+
+# 忽略所有自动生成的Qt文件
+ui_*.h
+moc_*.cpp

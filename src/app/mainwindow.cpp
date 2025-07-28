@@ -1,29 +1,29 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include "widgets/LogViewer.h" // from gui-widgets
-#include "core/Logger.h"
-#include "core/log/log.h"
 
+#include <QDir>
 #include <QDirIterator>
 #include <QDockWidget>
-#include <QQuickWidget>
 #include <QQmlContext>
-#include <QDir>
-#include <QQuickView>
-#include <QVBoxLayout>
 #include <QQmlEngine>
-MainWindow::MainWindow(QWidget *parent)
+#include <QQuickView>
+#include <QQuickWidget>
+#include <QVBoxLayout>
 
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow) {
-        ui->setupUi(this);
-        setWindowTitle(tr("My App"));
-        setWindowIcon(QIcon(":/icons/app-icon.svg"));
-setFixedWidth(800); // 设置窗口宽度为800像素
-        setFixedHeight(600); // 设置窗口高度为60素
-        setupMenus();
-        LOGINFO("hello world");
-       // setupDocks();
+#include "core/Logger.h"
+#include "core/log/log.h"
+#include "ui_mainwindow.h"
+#include "widgets/LogViewer.h"  // from gui-widgets
+MainWindow::MainWindow(QWidget* parent)
+    : QMainWindow(parent),
+      ui(new Ui::MainWindow) {
+    ui->setupUi(this);
+    setWindowTitle(tr("My App"));
+    setWindowIcon(QIcon(":/icons/app-icon.svg"));
+    setFixedWidth(800);   // 设置窗口宽度为800像素
+    setFixedHeight(600);  // 设置窗口高度为60素
+    setupMenus();
+    LOGINFO("hello world");
+    // setupDocks();
 #if 0        
         // ---  ---
         qDebug() << "=========================================================";
@@ -40,20 +40,20 @@ setFixedWidth(800); // 设置窗口宽度为800像素
             qDebug() << "  This confirms the resource file was not linked correctly.";
         }
         qDebug() << "=========================================================";
-#endif // --- 调试代码结束 ---
+#endif  // --- 调试代码结束 ---
 
-        embedQmlView();
+    embedQmlView();
 
-        Logger::instance().log("Main Window constructed and configured.");
-    }
+    Logger::instance().log("Main Window constructed and configured.");
+}
 
 MainWindow::~MainWindow() {
     delete ui;
 }
 
 void MainWindow::setupMenus() {
-    QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
-    QAction *exitAction = fileMenu->addAction(tr("E&xit"));
+    QMenu* fileMenu = menuBar()->addMenu(tr("&File"));
+    QAction* exitAction = fileMenu->addAction(tr("E&xit"));
     connect(exitAction, &QAction::triggered, this, &MainWindow::close);
 }
 
@@ -67,23 +67,23 @@ void MainWindow::setupDocks() {
 }
 
 void MainWindow::embedQmlView() {
-    auto *central = new QWidget(this);
-    auto *layout = new QVBoxLayout(central);
+    auto* central = new QWidget(this);
+    auto* layout = new QVBoxLayout(central);
     layout->setContentsMargins(0, 0, 0, 0);
 
-    auto *quickWidget = new QQuickWidget(this);
+    auto* quickWidget = new QQuickWidget(this);
     quickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
 
 #ifdef USE_STATIC_QML_MODULES
-    
+
     qDebug() << "use static qml module";
     quickWidget->engine()->addImportPath("qrc:/qt/qml");
-    quickWidget->setSource(QUrl("qrc:/qt/qml/app/ui/Dashboard/Dashboard.qml")); 
+    quickWidget->setSource(QUrl("qrc:/qt/qml/app/ui/Dashboard/Dashboard.qml"));
 
 #else
 
     qDebug() << "use shared qml module";
-    QString strQmlRootPath =  QCoreApplication::applicationDirPath() + "/../qml";
+    QString strQmlRootPath = QCoreApplication::applicationDirPath() + "/../qml";
     quickWidget->engine()->addImportPath(strQmlRootPath);
 
     QString qmlFilePath = (strQmlRootPath) + "/app/ui/Dashboard/Dashboard.qml";
@@ -95,7 +95,7 @@ void MainWindow::embedQmlView() {
 
 #if 1
     qDebug() << "QML import paths:";
-    for (const auto& path :  quickWidget->engine()->importPathList()) {
+    for (const auto& path : quickWidget->engine()->importPathList()) {
         qDebug() << path;
     }
 #endif

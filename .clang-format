@@ -1,0 +1,105 @@
+# =================================================================
+#  为Qt项目量身定制的Google C++风格Clang-Format配置文件
+#  
+#  * Author: https://github.com/gengshenchen
+#  * 基础风格: Google
+#  * 关键特性: 针对Qt生态优化，实现五级头文件排序
+#  * 适用工具: clang-format 12.0 及以上版本
+#  https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+# =================================================================
+
+# --- 基础与语言设置 ---
+Language: Cpp
+BasedOnStyle: Google
+
+# --- 核心格式化调整 (社区推荐与Qt生态适配) ---
+
+# 列宽限制：从Google默认的80放宽至100，适应现代宽屏显示器，与Qt官方风格一致。
+ColumnLimit: 100
+
+# 缩进宽度：使用4个空格进行缩进，而非Google的2个。这是Qt社区的普遍实践，可显著提升代码可读性。
+IndentWidth: 4
+UseTab: Never
+
+# 指针与引用对齐：将 '*' 和 '&' 左对齐至类型，如 'std::string* name'。
+# 这被认为是更现代的C++风格，强调修饰符是类型的一部分。
+PointerAlignment: Left
+DerivePointerAlignment: false
+
+# 访问修饰符偏移：将 'public:', 'private:' 等向左偏移2个空格，提供清晰的视觉分组，
+# 是在Google默认(-1)和Qt官方风格(-4)之间的一个良好折中。
+AccessModifierOffset: -2
+
+# 构造函数初始化列表：当初始化列表无法放在一行时，强制每个成员占一行。
+# 这避免了混乱的换行，极大提升了可读性，采纳自Qt官方风格。
+PackConstructorInitializers: Never
+
+# 禁止单行if语句：强制所有if语句（即使只有单行）使用花括号 '{}'。
+# 这是一个关键的安全增强，可有效防止悬空else等常见逻辑错误。
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+# 函数合并：仅允许空函数或在类定义内联的短函数合并为一行，保持代码的清晰结构。
+AllowShortFunctionsOnASingleLine: InlineOnly
+
+# Qt宏支持：将Qt特有的循环宏(如Q_FOREACH)识别为类似C++11的范围for循环，以确保正确的缩进和格式化。
+ForEachMacros:
+  - Q_FOREACH
+  - foreach
+  - Q_FOREVER
+  - forever
+
+# --- 头文件排序 (核心定制功能) ---
+
+# 启用头文件排序功能。
+SortIncludes: true
+
+# 排序前将所有#include块合并，然后根据IncludeCategories重新分组。
+# 这是实现干净、统一排序的关键。
+IncludeBlocks: Regroup
+
+# 定义用于识别与源文件相关联的主头文件的正则表达式。
+# '([-_](test|unittest))?$' 是一个健壮的模式，能正确处理 'myclass.cpp' -> 'myclass.h'
+# 以及 'myclass_test.cpp' -> 'myclass.h' 的情况。
+IncludeIsMainRegex: '([-_](test|unittest))?$'
+
+# 头文件分类与排序优先级 (数字越小，优先级越高)。
+# 这是实现用户指定排序顺序的核心配置。
+# 一个原则将最具体、最独特的规则放在列表的最前面，将最通用的规则放在最后面(如果匹配reg就不继续往下)
+# Related header, C system headers, C++ standard library headers, other libraries' headers, your project's headers.
+
+IncludeCategories:
+  # 优先级 0: 主头文件 (由 clang-format 自动处理，无需在此处配置)。
+  # 优先级 30: Qt 库头文件 (以Q或Qt开头的尖括号包含)
+  - Regex:           '^<(Q[A-Z]|Qt)[^/]*>$'
+    Priority:        30
+  # 优先级 10: C 系统头文件 (以.h结尾的尖括号包含)
+  - Regex:           '^<.*\.h>$'
+    Priority:        10
+  # 优先级 20: C++ 标准库头文件 (不含.h的尖括号包含)
+  - Regex:           '^<[a-z].*>$'
+    Priority:        20
+  # 优先级 40: 其他第三方库头文件 (其他尖括号包含)
+  - Regex:           '^<.*>$'
+    Priority:        40
+  # 优先级 50: 本项目头文件 (引号包含)
+  - Regex:           '^".*"'
+    Priority:        50
+
+# --- 其他细节微调 ---
+
+# 在C++11的列表初始化前不加空格，例如 'int x{0};' 而非 'int x {0};'。
+SpaceBeforeCpp11BracedList: false
+
+# 换行符后的对齐方式：对齐操作数，增强可读性。
+AlignOperands: Align
+
+# 连续赋值不对齐，保持Google风格的简洁性。
+AlignConsecutiveAssignments: None
+
+# 模板声明后总是换行。clang-format 19
+# BreakTemplateDeclarations: Yes
+AlwaysBreakTemplateDeclarations: Yes
+
+# 命名空间内不进行额外缩进，遵循Google风格。
+NamespaceIndentation: None
