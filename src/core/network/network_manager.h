@@ -8,7 +8,7 @@ using json = nlohmann::json;
 
 // 定義一個回調函數類型，用於處理網絡請求的結果
 using HttpResponseCallback = std::function<void(bool success, const json& data)>;
-namespace core{
+namespace qt_app_template::core {
 class NetworkManager {
 public:
     static NetworkManager& instance();
@@ -24,4 +24,4 @@ private:
     NetworkManager(const NetworkManager&) = delete;
     NetworkManager& operator=(const NetworkManager&) = delete;
 };
-}
+}  // namespace qt_app_template::core

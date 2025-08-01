@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>icons/app-icon.svg</file>
+        <file>certs/cacert.pem</file>
     </qresource>
 </RCC>

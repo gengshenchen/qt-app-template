@@ -35,6 +35,7 @@ MainWindow::MainWindow(QWidget* parent)
             // 打印找到的每一个资源的路径
             qDebug() << "  Found resource:" << it.next();
         }
+
         if (!foundAny) {
             qDebug() << "  !!! CRITICAL: No resources found inside the application. !!!";
             qDebug() << "  This confirms the resource file was not linked correctly.";
@@ -43,7 +44,6 @@ MainWindow::MainWindow(QWidget* parent)
 #endif  // --- 调试代码结束 ---
 
     embedQmlView();
-
     Logger::instance().log("Main Window constructed and configured.");
 }
 

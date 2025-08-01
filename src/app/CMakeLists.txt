@@ -1,4 +1,4 @@
-add_executable(${PROJECT_NAME} 
+add_executable(${PROJECT_NAME}
     main.cpp
     mainwindow.cpp
     mainwindow.h
@@ -17,12 +17,12 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::Qml
     Qt6::Quick
     Qt6::QuickWidgets
-  
+
     Core
-    WidgetsUI
+    WidgetsUi
     QmlUI
     # 静态库需要 链接插件目标
-    $<$<BOOL:${USE_STATIC_QML_MODULES}>:QmlUIplugin> 
+    $<$<BOOL:${USE_STATIC_QML_MODULES}>:QmlUIplugin>
     #$<IF:$<BOOL:${USE_STATIC_QML_MODULES}>,QmlUIplugin,"">        # 插件库本身
 )
 

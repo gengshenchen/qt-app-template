@@ -11,7 +11,7 @@
 
 #include "taskflow/taskflow.hpp"
 
-namespace core {
+namespace qt_app_template::core {
 class TaskManager {
   public:
     static TaskManager& instance();
@@ -22,8 +22,9 @@ class TaskManager {
     // 提交一個帶返回值的任務，並返回一個future以便將來獲取結果
     template <typename F, typename... Args>
     auto async(F&& f, Args&&... args) -> std::future<decltype(f(args...))> {
-        return m_executor.async(std::forward<F>(f), std::forward<Args>(args)...);
+        return executor_.async(std::forward<F>(f), std::forward<Args>(args)...);
     }
+    tf::Executor& executor() { return executor_; }
 
   private:
     TaskManager();
@@ -31,6 +32,6 @@ class TaskManager {
     TaskManager(const TaskManager&) = delete;
     TaskManager& operator=(const TaskManager&) = delete;
 
-    tf::Executor m_executor;
+    tf::Executor executor_;
 };
-}  // namespace core
+}  // namespace qt_app_template::core

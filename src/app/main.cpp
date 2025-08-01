@@ -6,15 +6,18 @@
 #include <QDebug>
 #include <QDir>
 #include <QTranslator>
+#include <qatomic.h>
 
 #include "core/Logger.h"
 #include "core/config/config_manager.h"
 #include "core/crash/crashpad_handler.h"
 #include "core/log/log.h"
 #include "core/network/network_manager.h"
+#include "core/platform/path_manager.h"
 #include "core/task/task_manager.h"
 #include "mainwindow.h"
 #include "shared/Constants.h"
+#include "version.h"
 
 #ifdef USE_STATIC_QML_MODULES
 #include <QQmlEngineExtensionPlugin>
@@ -80,7 +83,7 @@ void setup_crashpad() {
         "qt-app-template.rotating.log"};
 
     // 4. 初始化
-    bool initialized = core::CrashpadHandler::instance().initialize(
+    bool initialized = qt_app_template::core::CrashpadHandler::instance().initialize(
         handler_path, db_path, upload_url, annotations, attachments);
 
     if (initialized) {
@@ -100,36 +103,53 @@ int main(int argc, char* argv[]) {
 #else
     std::cout << "This is a DEBUG build." << std::endl;
 #endif
-
     QApplication a(argc, argv);
     a.setOrganizationName(Constants::ORG_NAME);
     a.setApplicationName(Constants::APP_NAME);
+    // PathManager是第一個被實例化的，因為其他管理器依賴它
+    auto& paths = qt_app_template::core::PathManager::instance();
+    qt_app_template::core::ConfigManager::instance().load(paths.config_dir().string());
 
     setup_crashpad();
 
-    // std::filesystem::path exe_dir = std::filesystem::current_path();
-    QString exe_dir = QCoreApplication::applicationDirPath();  // 可执行文件所在路径
-    std::string log_dir = (std::filesystem::path(exe_dir.toStdString()) / "../logs").string();
     const int log_count = 1132;
     // clang-format off
-    core::Log::instance().init(
-        {.use_async = true,
-         .log_dir = log_dir,
-         .log_name = Constants::APP_NAME.toStdString()
-         });
+    qt_app_template::core::Log::instance().init({
+        .use_async = true,
+        .log_dir = paths.log_dir(),
+        .log_name = Constants::APP_NAME.toStdString(),
+    });
     // clang-format on
-    core::Log::instance().set_level(spdlog::level::trace);
-    benchmark("Sync + Rotating", log_count);
 
+    qt_app_template::core::Log::instance().set_level(spdlog::level::trace);
+
+    // benchmark("vim-commentarySync + Rotating", log_count);
+
+    qt_app_template::core::ConfigManager::instance().load(
+        (paths.config_dir() / "settings.ini").string());
+
+    // 使用版本信息
+    LOGINFO("Starting {} version {}",
+            Constants::APP_NAME.toStdString(),
+            qt_app_template::version::kVersionString.data());
+    LOGINFO("exe path: {}", paths.executable_path().string());
+    LOGINFO("data path: {}", paths.data_dir().string());
+    LOGINFO("executable_dir : {}", paths.executable_dir().string());
+    LOGINFO("cache_dir : {}", paths.cache_dir().string());
+    LOGINFO("log_dir : {}", paths.log_dir().string());
+    LOGINFO("machine_config_dir : {}", paths.machine_config_dir().string());
+    LOGINFO("resources_dir : {}", paths.resources_dir().string());
     // 2. 使用任務管理器執行異步任務
-    LOGINFO("主線程ID: {}", std::hash<std::thread::id>{}(std::this_thread::get_id()));
-    core::TaskManager::instance().enqueue([]() {
+    std::stringstream ss;
+    ss << std::this_thread::get_id();
+    LOGINFO("主線程ID: {}", ss.str());
+    qt_app_template::core::TaskManager::instance().enqueue([]() {
         LOGINFO("這是一個來自後台線程的問候！線程ID: {}",
                 std::hash<std::thread::id>{}(std::this_thread::get_id()));
     });
 
     // 3. 使用網絡管理器獲取數據
-    core::NetworkManager::instance().get(
+    qt_app_template::core::NetworkManager::instance().get(
         "https://jsonplaceholder.typicode.com", "/todos/1", [](bool success, const json& data) {
             if (success) {
                 LOGINFO("網絡請求成功，獲取標題: {}", data["title"].get<std::string>());
@@ -160,8 +180,7 @@ int main(int argc, char* argv[]) {
     Logger::instance().log("Main window shown.");
     int result = a.exec();
 
-    core::Log::instance().deinit();
-
+    qt_app_template::core::Log::instance().deinit();
     return result;
 }
 

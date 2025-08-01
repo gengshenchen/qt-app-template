@@ -5,7 +5,7 @@
 
 #include "spdlog/spdlog.h"
 
-namespace core {
+namespace qt_app_template::core {
 
 Log& Log::instance() {
     static Log inst;
@@ -27,14 +27,16 @@ void Log::init(const LogConfig& config) {
     }
     if (config.daily) {
         auto daily_sink = std::make_shared<spdlog::sinks::daily_file_sink_mt>(
-            config.log_dir + "/" + config.log_name + ".log", config.daily_hour,
+            config.log_dir + "/" + config.log_name + ".log",
+            config.daily_hour,
             config.daily_minute);
         daily_sink->set_level(config.level);
         sinks.push_back(daily_sink);
     }
     if (config.rotating) {
         auto rotating_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
-            config.log_dir + "/" + config.log_name + ".rotating.log", config.rotating_max_size,
+            config.log_dir + "/" + config.log_name + ".rotating.log",
+            config.rotating_max_size,
             config.rotating_max_files);
         rotating_sink->set_level(config.level);
         sinks.push_back(rotating_sink);
@@ -44,9 +46,13 @@ void Log::init(const LogConfig& config) {
         size_t queue_size = 8192;
         size_t thread_count = 1;
         spdlog::init_thread_pool(queue_size, thread_count);
-        logger_ = std::make_shared<spdlog::async_logger>(config.log_name, sinks.begin(),
-                                                         sinks.end(), spdlog::thread_pool(),
+        logger_ = std::make_shared<spdlog::async_logger>(config.log_name,
+                                                         sinks.begin(),
+                                                         sinks.end(),
+                                                         spdlog::thread_pool(),
                                                          spdlog::async_overflow_policy::block);
+        spdlog::flush_every(std::chrono::seconds(3));
+
     } else {
         logger_ = std::make_shared<spdlog::logger>(config.log_name, sinks.begin(), sinks.end());
     }
@@ -69,5 +75,5 @@ void Log::deinit() {
     spdlog::shutdown();
 }
 
-}  // namespace core
+}  // namespace qt_app_template::core
 

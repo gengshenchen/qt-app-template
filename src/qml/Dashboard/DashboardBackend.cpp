@@ -1,14 +1,22 @@
 #include "DashboardBackend.h"
-#include "core/Logger.h"
+
 #include <QRandomGenerator>
-DashboardBackend::DashboardBackend(QObject *parent) : QObject(parent) {
+
+#include "core/Logger.h"
+DashboardBackend::DashboardBackend(QObject* parent)
+    : QObject(parent) {
     connect(&m_timer, &QTimer::timeout, this, &DashboardBackend::updateData);
     m_timer.start(1000);
     Logger::instance().log("Dashboard Backend Initialized.");
 }
 
-int DashboardBackend::cpuUsage() const { return m_cpuUsage; }
-int DashboardBackend::memUsage() const { return m_memUsage; }
+int DashboardBackend::cpuUsage() const {
+    return m_cpuUsage;
+}
+
+int DashboardBackend::memUsage() const {
+    return m_memUsage;
+}
 
 void DashboardBackend::resetValues() {
     Logger::instance().log("QML requested to reset dashboard values.");
@@ -27,3 +35,4 @@ void DashboardBackend::updateData() {
     emit cpuUsageChanged();
     emit memUsageChanged();
 }
+

@@ -26,7 +26,7 @@ static std::wstring Utf8ToWstring(const std::string& utf8_str) {
 }
 #endif
 
-namespace core {
+namespace qt_app_template::core {
 
 CrashpadHandler& CrashpadHandler::instance() {
     static CrashpadHandler handler;
@@ -135,5 +135,5 @@ bool CrashpadHandler::isInitialized() const {
     return initialized_;
 }
 
-} // namespace core
+}  // namespace qt_app_template::core
 

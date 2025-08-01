@@ -1,6 +1,6 @@
 # =================================================================
 #  为Qt项目量身定制的Google C++风格Clang-Format配置文件
-#  
+#
 #  * Author: https://github.com/gengshenchen
 #  * 基础风格: Google
 #  * 关键特性: 针对Qt生态优化，实现五级头文件排序
@@ -103,3 +103,11 @@ AlwaysBreakTemplateDeclarations: Yes
 
 # 命名空间内不进行额外缩进，遵循Google风格。
 NamespaceIndentation: None
+
+# 处理{}内参数一行一个
+AlignAfterOpenBracket: Align
+BinPackArguments: false
+Cpp11BracedListStyle: true
+
+# 在末尾保证有一行空行
+InsertNewlineAtEOF: true

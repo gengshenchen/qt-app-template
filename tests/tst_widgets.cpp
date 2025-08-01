@@ -1,21 +1,24 @@
-#include <QTest>
-#include <QSignalSpy>
-#include "core/Logger.h" // from core
+#include <QtTest/QtTest>  // 引入 Qt Test 主要头文件
 
-class CoreTest : public QObject {
+#include <QSignalSpy>
+// #include <QTest>
+
+#include "core/Logger.h"  // from core
+
+class WidgetsTest : public QObject {
     Q_OBJECT
-private slots:
+  private slots:
     void testLoggerSingleton();
     void testLoggerSignal();
 };
 
-void CoreTest::testLoggerSingleton() {
+void WidgetsTest::testLoggerSingleton() {
     Logger& logger1 = Logger::instance();
     Logger& logger2 = Logger::instance();
     QCOMPARE(&logger1, &logger2);
 }
 
-void CoreTest::testLoggerSignal() {
+void WidgetsTest::testLoggerSignal() {
     Logger& logger = Logger::instance();
     QSignalSpy spy(&logger, &Logger::newMessage);
     QVERIFY(spy.isValid());
@@ -27,5 +30,6 @@ void CoreTest::testLoggerSignal() {
     QVERIFY(arguments.at(0).toString().contains("Test Message"));
 }
 
-QTEST_MAIN(CoreTest)
-#include "tst_Core.moc"
+QTEST_MAIN(WidgetsTest)
+#include "tst_widgets.moc"
+

@@ -13,7 +13,7 @@ qt_add_qml_module(QmlUI
     URI "app.ui"
     VERSION 1.0
     ${QML_MODULE_STATIC}
-    OUTPUT_DIRECTORY ${QT_QML_OUTPUT_DIRECTORY} 
+    OUTPUT_DIRECTORY ${QT_QML_OUTPUT_DIRECTORY}
     RESOURCE_PREFIX /qt/qml
     SOURCES
         Dashboard/DashboardBackend.cpp Dashboard/DashboardBackend.h
@@ -32,5 +32,4 @@ target_include_directories(QmlUI PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/Dashboard
 )
-
 

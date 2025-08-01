@@ -1,17 +1,20 @@
 #pragma once
 #include <QWidget>
 
-namespace Ui { class LogViewer; }
+namespace Ui {
+class LogViewer;
+}
 
 class LogViewer : public QWidget {
     Q_OBJECT
-public:
-    explicit LogViewer(QWidget *parent = nullptr);
+  public:
+    explicit LogViewer(QWidget* parent = nullptr);
     ~LogViewer();
 
-public slots:
+  public slots:
     void onNewMessage(const QString& message);
 
-private:
-    Ui::LogViewer *ui;
+  private:
+    Ui::LogViewer* ui;
 };
+

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.19)
 
-project(qt-app-template VERSION 1.0.0 LANGUAGES CXX)
+project(qt-app-template VERSION 1.0.0 LANGUAGES CXX)  
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -15,6 +15,13 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
+configure_file(
+    src/shared/version.h.in      # 輸入模板文件
+    ${PROJECT_BINARY_DIR}/version.h # 輸出頭文件到構建目錄
+)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR NOT CMAKE_BUILD_TYPE)
+    add_compile_definitions(PROJECT_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
+endif()
 
 find_package(Qt6 REQUIRED COMPONENTS
     Core
@@ -26,8 +33,10 @@ find_package(Qt6 REQUIRED COMPONENTS
     Test          # 用于单元测试
     LinguistTools
 )
+#openssl
+find_package(OpenSSL REQUIRED)
 
-# 是否启用静态 QML 模块打包（默认为 OFF）
+#是否启用静态 QML 模块打包（默认为 OFF）
 option(USE_STATIC_QML_MODULES "Build QML modules as static" OFF)
 
 qt_standard_project_setup(
@@ -38,13 +47,14 @@ qt_standard_project_setup(
 qt_policy(SET QTP0001 NEW)
 qt_policy(SET QTP0004 NEW)
 
-# 按照“从底层到上层”的依赖顺序添加
+#按照“从底层到上层”的依赖顺序添加
 add_subdirectory(3rdparty/spdlog)
 add_subdirectory(3rdparty/crashpad)
-# 設置EXCLUDE_FROM_ALL可以防止在默認構建時編譯這些庫的測試等無關目標，加快編譯速度
+#設置EXCLUDE_FROM_ALL可以防止在默認構建時編譯這些庫的測試等無關目標，加快編譯速度
 add_subdirectory(3rdparty/simpleini EXCLUDE_FROM_ALL)
 add_subdirectory(3rdparty/json EXCLUDE_FROM_ALL)
 add_subdirectory(3rdparty/cpp-httplib EXCLUDE_FROM_ALL)
+set (TF_BUILD_TESTS OFF)
 add_subdirectory(3rdparty/taskflow EXCLUDE_FROM_ALL)
 
 add_subdirectory(src/shared)
@@ -52,5 +62,18 @@ add_subdirectory(src/core)
 add_subdirectory(src/widgets)
 add_subdirectory(src/qml)
 add_subdirectory(src/app)
-add_subdirectory(tests)
+
+include(CTest)
+if(BUILD_TESTING)
+  message(STATUS "Test building is enabled.")
+  add_subdirectory(3rdparty/googletest EXCLUDE_FROM_ALL)
+  add_subdirectory(tests)
+else()
+  message(STATUS "Test building is disabled.")
+endif()
+
+
+
+
+
 
