@@ -2,7 +2,7 @@
 namespace qt_app_template::core {
 TaskManager& TaskManager::instance() {
     static TaskManager instance;
-    return instance;
+        return instance;
 }
 
 TaskManager::TaskManager()

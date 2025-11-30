@@ -28,7 +28,7 @@ DerivePointerAlignment: false
 
 # 访问修饰符偏移：将 'public:', 'private:' 等向左偏移2个空格，提供清晰的视觉分组，
 # 是在Google默认(-1)和Qt官方风格(-4)之间的一个良好折中。
-AccessModifierOffset: -2
+AccessModifierOffset: -4
 
 # 构造函数初始化列表：当初始化列表无法放在一行时，强制每个成员占一行。
 # 这避免了混乱的换行，极大提升了可读性，采纳自Qt官方风格。

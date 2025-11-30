@@ -24,8 +24,7 @@ class TaskManager {
     auto async(F&& f, Args&&... args) -> std::future<decltype(f(args...))> {
         return executor_.async(std::forward<F>(f), std::forward<Args>(args)...);
     }
-    tf::Executor& executor() { return executor_; }
-
+    tf::Executor& executor() { return executor_; } 
   private:
     TaskManager();
     ~TaskManager();

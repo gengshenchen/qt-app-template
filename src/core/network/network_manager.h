@@ -1,6 +1,7 @@
 #pragma once
-#include <string>
 #include <functional>
+#include <string>
+
 #include "json/single_include/nlohmann/json.hpp"
 
 // 使用nlohmann::json作為數據類型別名
@@ -17,7 +18,8 @@ public:
     void get(const std::string& host, const std::string& path, HttpResponseCallback callback);
 
     // 異步發送POST請求
-    void post(const std::string& host, const std::string& path, const json& body, HttpResponseCallback callback);
+    void post(const std::string& host, const std::string& path, const json& body,
+              HttpResponseCallback callback);
 
 private:
     NetworkManager() = default;
@@ -25,3 +27,4 @@ private:
     NetworkManager& operator=(const NetworkManager&) = delete;
 };
 }  // namespace qt_app_template::core
+

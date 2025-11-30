@@ -3,7 +3,9 @@
 #include "core/Logger.h"
 #include "ui_LogViewer.h"
 
-LogViewer::LogViewer(QWidget* parent) : QWidget(parent), ui(new Ui::LogViewer) {
+LogViewer::LogViewer(QWidget* parent)
+    : QWidget(parent),
+      ui(new Ui::LogViewer) {
     ui->setupUi(this);
     connect(&Logger::instance(), &Logger::newMessage, this, &LogViewer::onNewMessage);
 }

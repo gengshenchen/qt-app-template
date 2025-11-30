@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget* parent)
     setupMenus();
     LOGINFO("hello world");
     // setupDocks();
-#if 0        
+#if 0
         // ---  ---
         qDebug() << "=========================================================";
         qDebug() << "Listing all available application resources at runtime...";
@@ -103,3 +103,4 @@ void MainWindow::embedQmlView() {
     layout->addWidget(quickWidget);
     setCentralWidget(central);
 }
+

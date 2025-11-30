@@ -93,7 +93,7 @@ void setup_crashpad() {
     }
 }
 void crash_now() {
-    volatile int* ptr = nullptr;
+    volatile int* ptr      = nullptr;
     *ptr = 42;
 }
 
@@ -183,4 +183,3 @@ int main(int argc, char* argv[]) {
     qt_app_template::core::Log::instance().deinit();
     return result;
 }
-

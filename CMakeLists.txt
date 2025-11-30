@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.19)
 
-project(qt-app-template VERSION 1.0.0 LANGUAGES CXX)  
+project(qt-app-template VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -40,7 +40,7 @@ find_package(OpenSSL REQUIRED)
 option(USE_STATIC_QML_MODULES "Build QML modules as static" OFF)
 
 qt_standard_project_setup(
-    I18N_SOURCE_LANGUAGE en  #default language 
+    I18N_SOURCE_LANGUAGE en  #default language
     I18N_TRANSLATED_LANGUAGES  zh de fr
     REQUIRES 6.5)
 
@@ -71,9 +71,4 @@ if(BUILD_TESTING)
 else()
   message(STATUS "Test building is disabled.")
 endif()
-
-
-
-
-
 

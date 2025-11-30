@@ -5,7 +5,6 @@ add_executable(${PROJECT_NAME}
     mainwindow.ui
     ${PROJECT_SOURCE_DIR}/resources/resources.qrc
 )
-
 if(USE_STATIC_QML_MODULES)
     target_compile_definitions(${PROJECT_NAME} PRIVATE USE_STATIC_QML_MODULES)
 endif()

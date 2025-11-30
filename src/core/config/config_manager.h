@@ -4,7 +4,7 @@
 #include "simpleini/SimpleIni.h"  // 直接包含submodule中的頭文件
 namespace qt_app_template::core {
 class ConfigManager {
-  public:
+public:
     static ConfigManager& instance();
 
     // 加載配置文件，應在程序啟動時調用
@@ -20,15 +20,14 @@ class ConfigManager {
     void setLong(const std::string& section, const std::string& key, long value);
     void setBool(const std::string& section, const std::string& key, bool value);
 
-  private:
+private:
     ConfigManager();
     ~ConfigManager();
     ConfigManager(const ConfigManager&) = delete;
     ConfigManager& operator=(const ConfigManager&) = delete;
-
     CSimpleIniA m_ini;
     std::string m_filePath;
     bool m_isDirty = false;
 };
 }  // namespace qt_app_template::core
-                                     
+

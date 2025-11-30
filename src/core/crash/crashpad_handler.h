@@ -1,8 +1,8 @@
 #pragma once
 
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 // 前向声明，避免在头文件中引入 Crashpad 的重量级头文件
 namespace crashpad {
@@ -36,12 +36,9 @@ public:
      * @param attachments 需要在崩溃时附加的文件路径列表 (例如日志文件)。
      * @return true 如果初始化成功，否则返回 false。
      */
-    bool initialize(
-        const std::string& handler_path,
-        const std::string& database_path,
-        const std::string& url,
-        const std::map<std::string, std::string>& annotations,
-        const std::vector<std::string>& attachments = {});
+    bool initialize(const std::string& handler_path, const std::string& database_path,
+                    const std::string& url, const std::map<std::string, std::string>& annotations,
+                    const std::vector<std::string>& attachments = {});
 
     /**
      * @brief 设置或更新崩溃报告的自定义元数据。
@@ -70,4 +67,3 @@ private:
 };
 
 }  // namespace qt_app_template::core
-

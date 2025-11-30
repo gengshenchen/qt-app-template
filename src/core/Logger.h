@@ -7,7 +7,7 @@ class Logger : public QObject {
 public:
     static Logger& instance();
     void log(const QString& message);
-
+    void test();
 signals:
     void newMessage(const QString& message);
 

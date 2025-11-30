@@ -33,7 +33,7 @@ struct LogConfig {
 };
 
 class Log {
-  public:
+public:
     static Log& instance();
 
     void init(const LogConfig& config);
@@ -42,7 +42,7 @@ class Log {
     void flush();
     std::shared_ptr<spdlog::logger> logger() const { return logger_; }
 
-  private:
+private:
     Log() = default;
     ~Log() = default;
     Log(const Log&) = delete;
@@ -59,14 +59,19 @@ class Log {
 #define LOGTRACE(...)   \
     SPDLOG_LOGGER_CALL( \
         qt_app_template::core::Log::instance().logger(), spdlog::level::trace, __VA_ARGS__)
-#define LOGDEBUG(...) \
-    SPDLOG_LOGGER_CALL(qt_app_template::core::Log::instance().logger(), spdlog::level::debug, __VA_ARGS__)
-#define LOGINFO(...) \
-    SPDLOG_LOGGER_CALL(qt_app_template::core::Log::instance().logger(), spdlog::level::info, __VA_ARGS__)
-#define LOGWARN(...) \
-    SPDLOG_LOGGER_CALL(qt_app_template::core::Log::instance().logger(), spdlog::level::warn, __VA_ARGS__)
-#define LOGERROR(...) \
-    SPDLOG_LOGGER_CALL(qt_app_template::core::Log::instance().logger(), spdlog::level::err, __VA_ARGS__)
+#define LOGDEBUG(...)   \
+    SPDLOG_LOGGER_CALL( \
+        qt_app_template::core::Log::instance().logger(), spdlog::level::debug, __VA_ARGS__)
+#define LOGINFO(...)    \
+    SPDLOG_LOGGER_CALL( \
+        qt_app_template::core::Log::instance().logger(), spdlog::level::info, __VA_ARGS__)
+#define LOGWARN(...)    \
+    SPDLOG_LOGGER_CALL( \
+        qt_app_template::core::Log::instance().logger(), spdlog::level::warn, __VA_ARGS__)
+#define LOGERROR(...)   \
+    SPDLOG_LOGGER_CALL( \
+        qt_app_template::core::Log::instance().logger(), spdlog::level::err, __VA_ARGS__)
 #define LOGCRITICAL(...) \
-    SPDLOG_LOGGER_CALL(qt_app_template::core::Log::instance().logger(), spdlog::level::critical, __VA_ARGS__)
+    SPDLOG_LOGGER_CALL(  \
+        qt_app_template::core::Log::instance().logger(), spdlog::level::critical, __VA_ARGS__)
 

@@ -7,7 +7,7 @@
 namespace qt_app_template::core {
 
 class PathManager {
-  public:
+public:
     // 獲取全局唯一的實例
     static PathManager& instance();
 
@@ -25,7 +25,7 @@ class PathManager {
     // 獲取與應用程序捆綁的、只讀的資源目錄
     const std::filesystem::path& resources_dir() const;
 
-  private:
+private:
     // 私有化構造函數等，確保單例模式
     PathManager();
     ~PathManager() = default;

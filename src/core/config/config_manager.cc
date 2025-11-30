@@ -59,5 +59,6 @@ void ConfigManager::setBool(const std::string& section, const std::string& key, 
     m_ini.SetBoolValue(section.c_str(), key.c_str(), value);
     m_isDirty = true;
 }
+
 }  // namespace qt_app_template::core
 

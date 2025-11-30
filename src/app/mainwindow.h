@@ -20,8 +20,9 @@ class MainWindow : public QMainWindow {
   public:
     MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
+    void testJJJJ();
 
-  private:
+private:
     void setupDocks();
     void setupMenus();
     void embedQmlView();

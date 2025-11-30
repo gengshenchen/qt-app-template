@@ -1,14 +1,17 @@
 #include "crashpad_handler.h"
 
+#include <zlib.h>
+
 #include <filesystem>
-#include <vector>
 #include <iostream>
+#include <vector>
+
 #include "base/files/file_path.h"
+#include "client/crash_report_database.h"
 #include "client/crashpad_client.h"
 #include "client/settings.h"
-#include "client/crash_report_database.h"
 
-//std::unique_ptr<crashpad::CrashReportDatabase> database;
+// std::unique_ptr<crashpad::CrashReportDatabase> database;
 
 // 平台特定的头文件和辅助函数
 #if defined(_WIN32)
@@ -19,9 +22,11 @@ static std::wstring Utf8ToWstring(const std::string& utf8_str) {
     if (utf8_str.empty()) {
         return std::wstring();
     }
-    int size_needed = MultiByteToWideChar(CP_UTF8, 0, utf8_str.c_str(), (int)utf8_str.size(), NULL, 0);
+    int size_needed =
+        MultiByteToWideChar(CP_UTF8, 0, utf8_str.c_str(), (int)utf8_str.size(), NULL, 0);
     std::wstring wstr_to(size_needed, 0);
-    MultiByteToWideChar(CP_UTF8, 0, utf8_str.c_str(), (int)utf8_str.size(), &wstr_to[0], size_needed);
+    MultiByteToWideChar(
+        CP_UTF8, 0, utf8_str.c_str(), (int)utf8_str.size(), &wstr_to[0], size_needed);
     return wstr_to;
 }
 #endif
@@ -42,12 +47,10 @@ CrashpadHandler::~CrashpadHandler() {
     client_ = nullptr;
 }
 
- bool CrashpadHandler::initialize(
-    const std::string& handler_path,
-    const std::string& database_path,
-    const std::string& url,
-    const std::map<std::string, std::string>& annotations,
-    const std::vector<std::string>& attachments) {
+bool CrashpadHandler::initialize(const std::string& handler_path, const std::string& database_path,
+                                 const std::string& url,
+                                 const std::map<std::string, std::string>& annotations,
+                                 const std::vector<std::string>& attachments) {
     if (initialized_) {
         return true;
     }
@@ -63,7 +66,6 @@ CrashpadHandler::~CrashpadHandler() {
     if (ec) {
         return false;
     }
-
     // 1. 准备路径，并根据平台进行正确转换
     base::FilePath handler;
     base::FilePath db;
@@ -75,7 +77,7 @@ CrashpadHandler::~CrashpadHandler() {
     db = base::FilePath(database_path);
 #endif
 
-     // 2. 准备附件
+    // 2. 准备附件
     std::vector<base::FilePath> file_attachments;
     for (const auto& att : attachments) {
 #if defined(_WIN32)
@@ -92,27 +94,25 @@ CrashpadHandler::~CrashpadHandler() {
     bool asynchronous_start = false;
 
     // 4. 正确调用 StartHandler
-    bool success = client_->StartHandler(
-        handler,
-        db,
-        db, // metrics_dir 通常可以和 db 路径相同
-        url,
-        annotations,
-        arguments,
-        restartable,
-        asynchronous_start,
-        file_attachments
-    );
+    bool success = client_->StartHandler(handler,
+                                         db,
+                                         db,  // metrics_dir 通常可以和 db 路径相同
+                                         url,
+                                         annotations,
+                                         arguments,
+                                         restartable,
+                                         asynchronous_start,
+                                         file_attachments);
 
     if (success) {
-        std::unique_ptr<crashpad::CrashReportDatabase> database = crashpad::CrashReportDatabase::Initialize(db);
+        std::unique_ptr<crashpad::CrashReportDatabase> database =
+            crashpad::CrashReportDatabase::Initialize(db);
 
-       if (database == nullptr || database->GetSettings() == NULL){
-
+        if (database == nullptr || database->GetSettings() == NULL) {
             return false;
-       }
-       /* Enable automated uploads. */
-       database->GetSettings()->SetUploadsEnabled(true);
+        }
+        /* Enable automated uploads. */
+        database->GetSettings()->SetUploadsEnabled(true);
         std::cout << "set upload enable true" << std::endl;
     }
 
@@ -136,4 +136,3 @@ bool CrashpadHandler::isInitialized() const {
 }
 
 }  // namespace qt_app_template::core
-

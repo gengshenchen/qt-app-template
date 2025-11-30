@@ -41,7 +41,7 @@ const fs::path& PathManager::config_dir() const {
     return config_dir_;
 }
 const fs::path& PathManager::data_dir() const {
-    return data_dir_;
+        return data_dir_;
 }
 const fs::path& PathManager::cache_dir() const {
     return cache_dir_;
