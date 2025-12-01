@@ -17,3 +17,8 @@ LogViewer::~LogViewer() {
 void LogViewer::onNewMessage(const QString& message) {
     ui->plainTextEdit->appendPlainText(message);
 }
+
+void LogViewer::newFunction(int value, const std::string& name) {
+    (void)value;
+    (void)name;
+}

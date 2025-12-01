@@ -24,8 +24,8 @@ void DashboardBackend::resetValues() {
     m_memUsage = 0;
     emit cpuUsageChanged();
     emit memUsageChanged();
-    volatile int* ptr = nullptr;
-    *ptr = 42;
+    // volatile int* ptr = nullptr;
+    // *ptr = 42;
 }
 
 void DashboardBackend::updateData() {

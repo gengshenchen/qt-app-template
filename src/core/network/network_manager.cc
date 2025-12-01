@@ -20,7 +20,7 @@ void NetworkManager::get(const std::string& host, const std::string& path,
     // 將網絡請求提交到我們的任務管理器中，在後台線程執行
     qt_app_template::core::TaskManager::instance().enqueue([host, path, callback]() {
         try {
-            // 為HTTPS創建客戶端，注意需要OpenSSL依賴
+            // 為HTTPS創建客戶端，注意需要OpenSSL依賴  #TODO openssl
             httplib::Client cli(host);
             // 需要CA證書文件
             auto& paths = qt_app_template::core::PathManager::instance();
@@ -28,7 +28,7 @@ void NetworkManager::get(const std::string& host, const std::string& path,
             // Disable cert verification
             cli.enable_server_certificate_verification(true);
 
-            cli.set_proxy("127.0.0.1", 7890);
+            cli.set_proxy("127.0.0.1", 7897);
 
             auto res = cli.Get(path.c_str());
             LOGTRACE("    Response Body: {}", res->body);
