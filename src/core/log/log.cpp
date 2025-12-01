@@ -12,7 +12,8 @@ Log& Log::instance() {
     return inst;
 }
 
-void Log::init(const LogConfig& config) {
+void Log::init(const LogConfig& config_in) {
+    LogConfig config = config_in;
 #ifdef NDEBUG
     config.console = false;
 #endif
