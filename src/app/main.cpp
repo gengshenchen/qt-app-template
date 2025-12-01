@@ -150,7 +150,7 @@ int main(int argc, char* argv[]) {
 
     // 3. 使用網絡管理器獲取數據
     qt_app_template::core::NetworkManager::instance().get(
-        "http://jsonplaceholder.typicode.com", "/todos/1", [](bool success, const json& data) {
+        "https://jsonplaceholder.typicode.com", "/todos/1", [](bool success, const json& data) {
             if (success) {
                 LOGINFO("網絡請求成功，獲取標題: {}", data["title"].get<std::string>());
                 // 【關鍵】如果要在回調中更新UI，必須使用Qt的機制切回主線程

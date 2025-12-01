@@ -41,7 +41,7 @@ const fs::path& PathManager::config_dir() const {
     return config_dir_;
 }
 const fs::path& PathManager::data_dir() const {
-        return data_dir_;
+    return data_dir_;
 }
 const fs::path& PathManager::cache_dir() const {
     return cache_dir_;
@@ -111,10 +111,12 @@ void PathManager::initialize_paths() {
         machine_config_dir_ = fs::path(programdata) / company_name / app_name;
 #elif defined(__APPLE__)
         const char* home = getenv("HOME");
-        if (!home) { throw std::runtime_error("HOME environment variable not found."); }
+        if (!home) {
+            throw std::runtime_error("HOME environment variable not found.");
+        }
         data_dir_ = fs::path(home) / "Library" / "Application Support" / app_name;
-        config_dir_ = data_dir_ / "config"; // 簡化處理，配置也放在App Support中
-        log_dir_ = data_dir_ / "logs"; // 簡化處理，配置也放在App Support中
+        config_dir_ = data_dir_ / "config";  // 簡化處理，配置也放在App Support中
+        log_dir_ = data_dir_ / "logs";       // 簡化處理，配置也放在App Support中
         cache_dir_ = fs::path(home) / "Library" / "Caches" / app_name;
         machine_config_dir_ = "/Library/Application Support" / app_name;
 #elif defined(__linux__)
