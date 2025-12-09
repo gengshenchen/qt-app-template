@@ -52,6 +52,9 @@ const fs::path& PathManager::resources_dir() const {
 const fs::path& PathManager::log_dir() const {
     return log_dir_;
 }
+const fs::path& PathManager::crash_dir() const {
+    return crash_dir_;
+}
 const fs::path& PathManager::machine_config_dir() const {
     return machine_config_dir_;
 }
@@ -107,6 +110,7 @@ void PathManager::initialize_paths() {
         config_dir_ = fs::path(appdata) / company_name / app_name / "config";
         data_dir_ = fs::path(local_appdata) / company_name / app_name / "data";
         log_dir_ = fs::path(local_appdata) / company_name / app_name / "logs";
+        crash_dir_ = fs::path(local_appdata) / company_name / app_name / "crashes";
         cache_dir_ = fs::path(local_appdata) / company_name / app_name / "cache";
         machine_config_dir_ = fs::path(programdata) / company_name / app_name;
 #elif defined(__APPLE__)
@@ -117,6 +121,7 @@ void PathManager::initialize_paths() {
         data_dir_ = fs::path(home) / "Library" / "Application Support" / app_name;
         config_dir_ = data_dir_ / "config";  // 簡化處理，配置也放在App Support中
         log_dir_ = data_dir_ / "logs";       // 簡化處理，配置也放在App Support中
+        crash_dir_ = data_dir_ / "crashes";
         cache_dir_ = fs::path(home) / "Library" / "Caches" / app_name;
         machine_config_dir_ = "/Library/Application Support" / app_name;
 #elif defined(__linux__)
@@ -133,6 +138,7 @@ void PathManager::initialize_paths() {
         data_dir_ /= app_name;
 
         log_dir_ = data_dir_ / "logs";
+        crash_dir_ = data_dir_ / "crashes";
         const char* xdg_cache_home = getenv("XDG_CACHE_HOME");
         cache_dir_ = xdg_cache_home ? fs::path(xdg_cache_home) : fs::path(home) / ".cache";
         cache_dir_ /= app_name;
@@ -157,6 +163,7 @@ void PathManager::initialize_paths() {
         fs::create_directories(data_dir_);
         fs::create_directories(cache_dir_);
         fs::create_directories(log_dir_);
+        fs::create_directories(crash_dir_);
 
     } catch (const std::exception& e) {
         // 如果在初始化時發生嚴重錯誤，我們需要一種方式來處理它
@@ -173,6 +180,8 @@ void PathManager::initialize_paths() {
             resources_dir_ = executable_dir_;
         if (log_dir_.empty())
             log_dir_ = executable_dir_;
+        if (crash_dir_.empty())
+            crash_dir_ = executable_dir_;
         if (machine_config_dir_.empty())
             machine_config_dir_ = executable_dir_;
     }

@@ -19,6 +19,9 @@
 #include "shared/Constants.h"
 #include "version.h"
 
+#include <QCefConfig.h>
+#include <QCefContext.h>
+
 #ifdef USE_STATIC_QML_MODULES
 #include <QQmlEngineExtensionPlugin>
 Q_IMPORT_QML_PLUGIN(app_uiPlugin)  // URI app.ui
@@ -58,14 +61,29 @@ void benchmark(const std::string& mode_desc, int N) {
 }
 
 void setup_crashpad() {
-    // 1. 定义路径和参数
-    std::string handler_path =
-        "/home/karl/work/qt-app-template/3rdparty/crashpad/bin/"
-        "crashpad_handler";  // 在Linux/macOS
-    // std::string handler_path = "crashpad_handler.exe"; // 在Windows
-    std::string db_path = "/home/karl/work/qt-app-template/out/crashes";
-    //    std::string upload_url =
-    //    "https://submit.backtrace.io/cgs/e461fe30fdad99925439a62c599edf7d66b7e007d1379d2359a7e2380af62130/minidump";
+    auto& paths = qt_app_template::core::PathManager::instance();
+    namespace fs = std::filesystem;
+// 1. 定义路径和参数
+#ifdef PROJECT_SOURCE_DIR
+    // 开发模式：CMake传入了源码根目录宏，直接指向源码中的resources
+    fs::path handler_path = fs::path(PROJECT_SOURCE_DIR) / "3rdparty" / "crashpad" / "bin";
+#else
+// 发布模式：使用相對於可執行文件的約定路徑
+#ifdef __APPLE__
+    fs::path handler_path = paths.executable_dir() / ".." / "Frameworks";
+#else
+    fs::path handler_path = paths.executable_dir();
+#endif
+#endif
+
+#ifdef _WIN32
+    handler_path /= "crashpad_handler.exe";
+#else
+    handler_path /= "crashpad_handler";
+#endif
+
+    fs::path db_path = paths.crash_dir();
+    fs::create_directories(db_path);
 
     std::string upload_url =
         "https://submit.backtrace.io/cgs/"
@@ -78,13 +96,13 @@ void setup_crashpad() {
                                                       {"version", "1.2.6"},
                                                       {"user_id", "user-12345"}};
     // 3. 定义附件
-    std::vector<std::string> attachments = {
-        "/home/karl/work/qt-app-template/out/logs/"
-        "qt-app-template.rotating.log"};
+    fs::path log_file_path =
+        paths.log_dir() / (std::string(Constants::APP_NAME.toStdString()) + ".rotating.log");
+    std::vector<std::string> attachments = {log_file_path.string()};
 
     // 4. 初始化
     bool initialized = qt_app_template::core::CrashpadHandler::instance().initialize(
-        handler_path, db_path, upload_url, annotations, attachments);
+        handler_path.string(), db_path.string(), upload_url, annotations, attachments);
 
     if (initialized) {
         std::cout << "Crashpad initialized successfully." << std::endl;
@@ -103,14 +121,23 @@ int main(int argc, char* argv[]) {
 #else
     std::cout << "This is a DEBUG build." << std::endl;
 #endif
+
+    QCefConfig config;
+    config.setBridgeObjectName("CallBridge");
+    config.setRemoteDebuggingPort(9000);
+    config.setSandboxDisabled(true);
+    config.addCommandLineSwitchWithValue("remote-allow-origins", "*");
+    config.addCommandLineSwitchWithValue("ozone-platform", "x11");
+    //config.addCommandLineSwitch("disable-gpu-compositing"); // 如果遇到黑屏，尝试禁用 GPU 合成
     QApplication a(argc, argv);
+
+    QCefContext cefContext(&a, argc, argv, &config);
+
     a.setOrganizationName(Constants::ORG_NAME);
     a.setApplicationName(Constants::APP_NAME);
     // PathManager是第一個被實例化的，因為其他管理器依賴它
     auto& paths = qt_app_template::core::PathManager::instance();
     qt_app_template::core::ConfigManager::instance().load(paths.config_dir().string());
-
-    setup_crashpad();
 
     const int log_count = 1132;
     // clang-format off
@@ -120,6 +147,7 @@ int main(int argc, char* argv[]) {
         .log_name = Constants::APP_NAME.toStdString(),
     });
     // clang-format on
+    setup_crashpad();
 
     qt_app_template::core::Log::instance().set_level(spdlog::level::trace);
 
@@ -137,6 +165,7 @@ int main(int argc, char* argv[]) {
     LOGINFO("executable_dir : {}", paths.executable_dir().string());
     LOGINFO("cache_dir : {}", paths.cache_dir().string());
     LOGINFO("log_dir : {}", paths.log_dir().string());
+    LOGINFO("crash_dir : {}", paths.crash_dir().string());
     LOGINFO("machine_config_dir : {}", paths.machine_config_dir().string());
     LOGINFO("resources_dir : {}", paths.resources_dir().string());
     // 2. 使用任務管理器執行異步任務

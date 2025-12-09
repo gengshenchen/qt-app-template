@@ -21,6 +21,17 @@ configure_file(
 )
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR NOT CMAKE_BUILD_TYPE)
     add_compile_definitions(PROJECT_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
+    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        add_custom_target(start_web_dev_server ALL
+            COMMAND cmd /c "${CMAKE_CURRENT_SOURCE_DIR}/scripts/start_web.bat"
+            COMMENT "Starting web dev server"
+        )
+    else()
+        add_custom_target(start_web_dev_server ALL
+            COMMAND bash "${CMAKE_CURRENT_SOURCE_DIR}/scripts/start_web.sh"
+            COMMENT "Starting web dev server"
+        )
+    endif()
 endif()
 
 find_package(Qt6 REQUIRED COMPONENTS
@@ -56,6 +67,7 @@ add_subdirectory(3rdparty/json EXCLUDE_FROM_ALL)
 add_subdirectory(3rdparty/cpp-httplib EXCLUDE_FROM_ALL)
 set (TF_BUILD_TESTS OFF)
 add_subdirectory(3rdparty/taskflow EXCLUDE_FROM_ALL)
+add_subdirectory(3rdparty/QCefView)
 
 add_subdirectory(src/shared)
 add_subdirectory(src/core)

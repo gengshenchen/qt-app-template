@@ -3,8 +3,20 @@ add_executable(${PROJECT_NAME}
     mainwindow.cpp
     mainwindow.h
     mainwindow.ui
+    js_bridge.cpp
+    js_bridge.h
     ${PROJECT_SOURCE_DIR}/resources/resources.qrc
 )
+
+# 拷贝web app
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${PROJECT_SOURCE_DIR}/web/build
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/web/build
+    COMMENT "Copying web app to build directory"
+)
+message(STATUS "Web app will be copied to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/web/build")
+
 if(USE_STATIC_QML_MODULES)
     target_compile_definitions(${PROJECT_NAME} PRIVATE USE_STATIC_QML_MODULES)
 endif()
@@ -20,12 +32,25 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Core
     WidgetsUi
     QmlUI
+    QCefView
     # 静态库需要 链接插件目标
     $<$<BOOL:${USE_STATIC_QML_MODULES}>:QmlUIplugin>
     #$<IF:$<BOOL:${USE_STATIC_QML_MODULES}>,QmlUIplugin,"">        # 插件库本身
 )
 
 qt_import_qml_plugins(${PROJECT_NAME})# 静态插件引入（官方 Qt 插件）
+
+# 拷贝 QCefView 的编译产物 (包括CefViewWing, libQCefView.so, 和所有CEF资源)
+# 到主程序的输出目录
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    $<TARGET_FILE_DIR:QCefView> # 源目录
+    $<TARGET_FILE_DIR:${PROJECT_NAME}> # 目标目录
+    COMMENT "Copying QCefView binaries and resources to application directory"
+)
+
+
+
 
 # --- 国际化(i18n)配置 ---
 qt_add_translations(${PROJECT_NAME}

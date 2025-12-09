@@ -20,6 +20,7 @@ public:
     const std::filesystem::path& data_dir() const;            // 用戶數據目錄
     const std::filesystem::path& cache_dir() const;           // 用戶緩存目錄
     const std::filesystem::path& log_dir() const;             // 用戶日志目錄
+    const std::filesystem::path& crash_dir() const;           // 用戶崩潰目錄
     const std::filesystem::path& machine_config_dir() const;  //
 
     // 獲取與應用程序捆綁的、只讀的資源目錄
@@ -43,6 +44,7 @@ private:
     std::filesystem::path data_dir_;
     std::filesystem::path cache_dir_;
     std::filesystem::path log_dir_;
+    std::filesystem::path crash_dir_;
     std::filesystem::path resources_dir_;
     std::filesystem::path machine_config_dir_;  // 安装程序负责创建
 };

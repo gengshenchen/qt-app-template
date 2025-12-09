@@ -1,18 +1,23 @@
 #include "mainwindow.h"
 
+#include <QCefView.h>
 #include <QDir>
 #include <QDirIterator>
 #include <QDockWidget>
+#include <QPushButton>
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QQuickView>
 #include <QQuickWidget>
+#include <QToolBar>
 #include <QVBoxLayout>
 
 #include "core/Logger.h"
 #include "core/log/log.h"
+#include "js_bridge.h"
 #include "ui_mainwindow.h"
 #include "widgets/LogViewer.h"  // from gui-widgets
+
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
       ui(new Ui::MainWindow) {
@@ -23,6 +28,16 @@ MainWindow::MainWindow(QWidget* parent)
     setFixedHeight(600);  // 设置窗口高度为60素
     setupMenus();
     LOGINFO("hello world");
+
+    QToolBar* toolBar = addToolBar("Main");
+    QPushButton* button = new QPushButton("Call JS", this);
+    toolBar->addWidget(button);
+    connect(button, &QPushButton::clicked, this, [this]() {
+        if (m_cefView) {
+            m_cefView->executeJavascript(QCefView::MainFrameID, "alert('c++ exec js');", "");
+        }
+    });
+
     // setupDocks();
 #if 0
         // ---  ---
@@ -43,8 +58,11 @@ MainWindow::MainWindow(QWidget* parent)
         qDebug() << "=========================================================";
 #endif  // --- 调试代码结束 ---
 
-    embedQmlView();
+    m_jsBridge = new JsBridge(this);
+    embedCefView();
     Logger::instance().log("Main Window constructed and configured.");
+
+    connect(m_cefView, &QCefView::invokeMethod, this, &MainWindow::onInvokeMethod);
 }
 
 MainWindow::~MainWindow() {
@@ -104,3 +122,31 @@ void MainWindow::embedQmlView() {
     setCentralWidget(central);
 }
 
+void MainWindow::embedCefView() {
+    auto* central = new QWidget(this);
+    auto* layout = new QVBoxLayout(central);
+    layout->setContentsMargins(0, 0, 0, 0);
+    QCefSetting setting;
+    setting.setOffScreenRenderingEnabled(true);
+
+#if defined(NDEBUG)
+    QString path = QCoreApplication::applicationDirPath() + "/web/build/index.html";
+    qDebug() << "Loading local file:" << path;
+    m_cefView = new QCefView(QUrl::fromLocalFile(path).toString(), &setting, this);
+#else
+    m_cefView = new QCefView("http://localhost:3000", &setting, this);
+#endif
+
+    layout->addWidget(m_cefView);
+
+    setCentralWidget(central);
+}
+
+void MainWindow::onInvokeMethod(const QCefBrowserId& browserId, const QCefFrameId& frameId,
+                                const QString& method, const QVariantList& arguments) {
+    if (method == "test") {
+        if (arguments.size() > 0) {
+            m_jsBridge->test(arguments.at(0).toString());
+        }
+    }
+}
