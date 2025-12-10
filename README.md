@@ -1,38 +1,90 @@
-# File: README.md
 # MyQtAppTemplate
 
-这是一个基于CMake的、支持QWidget和QML混合开发的、跨平台的Qt应用程序模板。
+This is a cross-platform Qt application template based on CMake that supports hybrid development with QWidget and QML.
 
-## 架构
+## Architecture
 
-本项目采用模块化的设计理念，将不同职责的代码分离到独立的库中：
+This project adopts a modular design concept, separating code with different responsibilities into independent libraries:
 
-- `src/core`: 核心业务逻辑 (非GUI)
-- `src/shared`: 跨模块共享的数据结构和常量
-- `src/gui-widgets`: 可复用的自定义QWidget控件
-- `src/gui-qml`: 可复用的QML组件及其C++后端
-- `src/app`: 主程序入口，负责组装所有模块
-- `tests`: 单元测试
+- `src/core`: Core business logic (non-GUI)
+- `src/shared`: Data structures and constants shared across modules
+- `src/widgets`: Reusable custom QWidget controls
+- `src/qml`: Reusable QML components and their C++ backends
+- `src/app`: Main program entry point, responsible for assembling all modules
+- `tests`: Unit tests
 
-## 如何构建
+## Web Frontend Integration
 
-你需要安装:
+This template integrates [QCefView](https://github.com/CefView/QCefView), which is a Qt-based QWidget that encapsulates CEF (Chromium Embedded Framework). This allows you to build your application's UI using modern web technologies (HTML, CSS, JavaScript) while seamlessly integrating with the Qt backend.
+
+Key features:
+- **Hybrid Development**: Combine the power of Qt for native functionalities with the flexibility of web technologies for the UI.
+- **Decoupled UI**: Keep your UI code (web frontend) separate from the business logic (C++ backend).
+- **Modern UI/UX**: Leverage popular web frameworks like React, Vue, or Angular to create modern and responsive user interfaces.
+
+## How to Build
+
+You need to install:
 - CMake (>= 3.16)
-- C++ 编译器 (GCC, Clang, or MSVC)
-- Qt6 (>= 6.2)
+- C++ Compiler (GCC, Clang, or MSVC)
+- Qt (>= 6.2)
 
-### 构建步骤
+### Using the `build.sh` Script (Recommended)
 
-1. **克隆仓库**
-   ```bash
-   git clone <your-repo-url>
+The `build.sh` script provides a convenient way to configure, build, and update translations for the project. It handles various build configurations and automatically detects the number of CPU cores for parallel compilation.
 
-   rm -rf out && cmake -S . -B out -DCMAKE_PREFIX_PATH=/home/karl/Qt6/6.9.1/gcc_64 -DUSE_STATIC_QML_MODULES=OFF
+**Usage:**
 
-2. **更新翻译，提取生成 ts file**
-   ```bash
-   cmake --build out --target update_translations -j16
+```bash
+./build.sh [clean] [Debug|Release|RelWithDebInfo|MinSizeRel] [/path/to/qt]
+```
 
-3. **build all**
-   ```bash
-   cmake --build out  -j16
+Arguments can be provided in any order:
+
+-   `clean`: (Optional) Performs a clean build (removes previous build artifacts before recompiling).
+-   `Debug|Release|RelWithDebInfo|MinSizeRel`: (Optional) Specifies the CMake build type. If omitted, defaults to `Debug`.
+-   `/path/to/qt`: (Optional) Specifies the path to your Qt SDK installation (e.g., `/home/user/Qt/6.2.4/gcc_64`). If omitted, the script tries to use the `QT_PREFIX_PATH` environment variable or a default path configured within the script.
+
+**Examples:**
+
+-   Build in Debug mode using the default Qt path:
+    ```bash
+    ./build.sh
+    ```
+-   Build in Release mode with a specific Qt path:
+    ```bash
+    ./build.sh Release /opt/Qt/6.5.0/gcc_64
+    ```
+-   Perform a clean build in RelWithDebInfo mode:
+    ```bash
+    ./build.sh clean RelWithDebInfo
+    ```
+
+### Manual Build Steps
+
+If you prefer to build manually, follow these steps:
+
+1.  **Clone the repository**
+    ```bash
+    git clone <your-repo-url>
+    ```
+
+2.  **Configure the project**
+    ```bash
+    rm -rf out && cmake -S . -B out -DCMAKE_PREFIX_PATH=<path-to-your-qt-sdk>
+    ```
+    For example:
+    ```bash
+    rm -rf out && cmake -S . -B out -DCMAKE_PREFIX_PATH=/home/user/Qt/6.2.4/gcc_64
+    ```
+
+3.  **Update translations** (Optional)
+    This command will scan the source code for translatable strings and generate/update the `.ts` translation files.
+    ```bash
+    cmake --build out --target update_translations -j16
+    ```
+
+4.  **Build the application**
+    ```bash
+    cmake --build out -j16
+    ```
