@@ -1,4 +1,4 @@
-# MyQtAppTemplate
+# QtAppTemplate
 
 This is a cross-platform Qt application template based on CMake that supports hybrid development with QWidget and QML.
 
